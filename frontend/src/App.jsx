@@ -1,22 +1,31 @@
-import GlassPanel from './components/GlassPanel.jsx'
-import StatusBadge from './components/StatusBadge.jsx'
+import DashboardLayout from './components/DashboardLayout.jsx'
+import MetricCard from './components/MetricCard.jsx'
+import ProcurementPipeline from './components/ProcurementPipeline.jsx'
+import RecentRequests from './components/RecentRequests.jsx'
+import RiskSummary from './components/RiskSummary.jsx'
+import RecommendationCard from './components/RecommendationCard.jsx'
+import { metrics } from './data/mockData.js'
 
 function App() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
-      <GlassPanel className="w-full max-w-md px-10 py-12 text-center">
-        <h1 className="text-3xl font-semibold tracking-tight text-white">
-          ProcureAI
-        </h1>
-        <p className="mt-3 text-sm text-slate-400">
-          Autonomous Procurement Agent
-        </p>
+    <DashboardLayout>
+      <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {metrics.map((metric) => (
+          <MetricCard key={metric.id} label={metric.label} value={metric.value} />
+        ))}
+      </section>
 
-        <div className="mt-8 flex justify-center">
-          <StatusBadge label="System Ready" />
+      <ProcurementPipeline />
+
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <RecentRequests />
         </div>
-      </GlassPanel>
-    </div>
+        <RiskSummary />
+      </section>
+
+      <RecommendationCard />
+    </DashboardLayout>
   )
 }
 
