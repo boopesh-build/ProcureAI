@@ -1,10 +1,10 @@
 import Sidebar from './Sidebar.jsx'
 import TopBar from './TopBar.jsx'
 
-function DashboardLayout({ children }) {
+function DashboardLayout({ children, activePage, onNavigate }) {
   return (
-    <div className="flex min-h-screen bg-base text-slate-200">
-      <Sidebar />
+    <div className="flex min-h-screen text-slate-200 app-root relative z-10">
+      <Sidebar activePage={activePage} onNavigate={onNavigate} />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar />
         <main className="flex-1 overflow-y-auto px-8 py-8">

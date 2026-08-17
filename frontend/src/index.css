@@ -1,18 +1,26 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
 
+/* Bright theme variables for premium glassmorphism */
 @theme {
   --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
 
-  --color-base: #05070c;
-  --color-surface: #0b0f18;
-  --color-accent: #4f8cff;
-  --color-accent-dim: #4f8cff33;
-  --color-success: #34d399;
-  --color-warning: #f5a524;
-  --color-danger: #f0546b;
-  --color-neutral: #64748b;
+  /* Bright palette */
+  --color-base: #F4F8FB; /* main background */
+  --color-glass: #FFFFFF; /* glass base */
+  --color-text-primary: #17202A; /* primary text */
+  --color-text-secondary: #5B6875; /* secondary text */
+  --color-accent: #00B8C8; /* primary cyan */
+  --color-accent-2: #159A9C; /* secondary teal */
+  --color-accent-soft: #DDF9FA; /* soft cyan */
+  --color-success: #16A34A;
+  --color-warning: #D97706;
+  --color-danger: #DC2626;
+
+  /* derived */
+  --glass-border: rgba(255,255,255,0.72);
+  --glass-highlight: rgba(255,255,255,0.18);
+  --glass-shadow: 0 8px 28px rgba(23,32,42,0.06);
 }
 
 html,
@@ -23,15 +31,215 @@ body,
 
 body {
   margin: 0;
-  background: var(--color-base);
+  /* Base color only; background image/overlays are handled in pseudo-elements
+     so we can control stacking and ensure the image is visible beneath UI. */
+  background-color: var(--color-base);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  color: var(--color-text-primary);
+  overflow-y: auto;
 }
 
-.font-display {
-  font-family: var(--font-display);
+/* Put the supplied background image into a fixed pseudo-element so it sits
+   behind content but above the base color; this avoids being obscured by
+   other pseudo-gradients. */
+body::before {
+  /* image layer */
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: url('/images/procure-bg.png') center center / cover no-repeat;
+  background-attachment: fixed;
+  filter: blur(6px) saturate(110%);
+  opacity: 1;
+  pointer-events: none;
 }
 
-.tabular {
-  font-variant-numeric: tabular-nums;
+/* Very subtle white overlay and cyan/teal atmospheric tint that sits above
+   the image but below app content (.app-root has z-index:10). */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.08));
 }
+
+
+/* Ensure app content layers above the background */
+.app-root {
+  position: relative;
+  z-index: 10; /* above the decorative background */
+}
+
+/* Transparent frosted glass for bright UI (refined for real frosted feel) */
+.glass-panel {
+  background: rgba(255,255,255,0.38); /* more transparent so waves show through */
+  border: 1px solid rgba(255,255,255,0.72); /* crisp light border */
+  backdrop-filter: blur(32px) saturate(145%);
+  -webkit-backdrop-filter: blur(32px) saturate(145%);
+  box-shadow: 0 10px 30px rgba(23,32,42,0.06);
+  transition: all 180ms ease;
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px; /* slightly rounded corners */
+}
+
+/* Inner top highlight for realistic frosted glass */
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  left: -12%;
+  top: -28%;
+  width: 124%;
+  height: 48%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.28), rgba(255,255,255,0));
+  transform: rotate(-6deg);
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  opacity: 0.95;
+}
+
+/* Subtle cyan reflection to add premium sheen */
+.glass-panel::after {
+  content: '';
+  position: absolute;
+  right: -28%;
+  top: -30%;
+  width: 56%;
+  height: 110%;
+  background: linear-gradient(120deg, rgba(0,184,200,0.04), rgba(21,154,156,0.02));
+  filter: blur(18px);
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.glass-panel:hover {
+  background: rgba(255,255,255,0.44);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 38px rgba(23,32,42,0.08);
+}
+
+/* Slight variation for larger surfaces like sidebar/topbar */
+.glass-surface {
+  background: rgba(255,255,255,0.40);
+  border: 1px solid rgba(255,255,255,0.78);
+  backdrop-filter: blur(32px) saturate(145%);
+  -webkit-backdrop-filter: blur(32px) saturate(145%);
+  box-shadow: 0 14px 42px rgba(23,32,42,0.06);
+  border-radius: 14px;
+}
+
+/* Accent glow modifier */
+.glass-panel.accent-glow::after,
+.glass-surface.accent-glow::after {
+  content: '';
+  position: absolute;
+  right: -20%;
+  top: -20%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(0,184,200,0.06), rgba(21,154,156,0.03));
+  filter: blur(18px);
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+/* Accent focus / active states */
+.accent-glow {
+  border-color: rgba(0,184,200,0.24);
+  box-shadow: 0 12px 38px rgba(0,184,200,0.04), 0 6px 18px rgba(0,0,0,0.03) inset;
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(90deg, #00B8C8, #159A9C);
+  color: white;
+  box-shadow: 0 8px 30px rgba(1,25,29,0.06);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.6);
+}
+
+.btn-primary:hover { transform: translateY(-2px); filter: brightness(1.02); }
+
+/* Subtle outline buttons */
+.btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(23,32,42,0.06);
+  color: var(--color-text-secondary);
+}
+
+/* Inputs and form controls styled as recessed translucent glass */
+.app-root input,
+.app-root textarea,
+.app-root select,
+.app-root .input,
+.app-root .form-control {
+  background: rgba(230,240,245,0.55);
+  border: 1px solid rgba(23,32,42,0.06);
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  color: var(--color-text-primary);
+}
+
+.app-root input::placeholder,
+.app-root textarea::placeholder { color: rgba(91,104,117,0.56); }
+
+/* Input focus */
+.input-focus:focus,
+.app-root input:focus,
+.app-root textarea:focus,
+.app-root select:focus {
+  outline: none;
+  box-shadow: 0 8px 28px rgba(0,184,200,0.08);
+  border-color: rgba(0,184,200,0.18);
+}
+
+/* Typography helpers */
+.text-muted { color: var(--color-text-secondary); }
+.text-accent { color: var(--color-accent); }
+.text-teal { color: var(--color-accent-2); }
+
+/* Sidebar active state */
+.sidebar .nav-item[aria-current="page"] {
+  background: linear-gradient(90deg, rgba(0,184,200,0.12), rgba(21,154,156,0.06));
+  color: var(--color-text-primary) !important;
+  border-left: 3px solid var(--color-accent);
+}
+
+/* Make sure glass elements allow seeing background through blur */
+.glass-panel, .glass-surface { background-clip: padding-box; }
+
+/* Utility: map previous dark 'text-white' and slate classes to bright theme inside app-root */
+.app-root .text-white { color: var(--color-text-primary) !important; }
+
+/* More specific slate -> bright mappings for improved contrast
+   Light slate variants are used for headings / important values in the codebase
+   and should map to the dark primary text for readability. Mid/low slate map to secondary. */
+.app-root .text-slate-50,
+.app-root .text-slate-100,
+.app-root .text-slate-200,
+.app-root .text-slate-300 {
+  color: var(--color-text-primary) !important;
+}
+
+.app-root .text-slate-400,
+.app-root .text-slate-500,
+.app-root .text-slate-600,
+.app-root .text-slate-700,
+.app-root .text-slate-800 {
+  color: var(--color-text-secondary) !important;
+}
+
+/* Small responsive tweaks */
+@media (max-width: 768px) {
+  .glass-panel:hover { transform: none; }
+}
+
+.font-display { font-family: var(--font-display); }
+
+.tabular { font-variant-numeric: tabular-nums; }

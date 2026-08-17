@@ -1,6 +1,6 @@
 function TopBar() {
   return (
-    <header className="flex items-center justify-between border-b border-white/[0.06] bg-surface/60 px-8 py-5 backdrop-blur-xl">
+    <header className="flex items-center justify-between border-b border-white/[0.06] bg-surface/60 px-8 py-5 backdrop-blur-xl glass-surface">
       <div>
         <h1 className="font-display text-xl font-semibold tracking-tight text-white">
           Dashboard
