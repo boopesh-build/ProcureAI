@@ -68,6 +68,34 @@ function BuyingRequestPage() {
     resetPipelineState()
   }
 
+  // Parse the freeform brief and populate structured fields when possible
+  function handleParseBrief() {
+    // lazy-load parser to keep file small and focused
+    import('../utils/briefParser.js').then(({ parseBrief }) => {
+      const parsed = parseBrief(brief || '')
+      if (!parsed) return
+
+      // Apply detected fields using existing handlers so pipeline state is reset
+      if (parsed.item) handleFieldChange('item', parsed.item)
+      if (parsed.quantity) handleFieldChange('quantity', String(parsed.quantity))
+      if (parsed.budgetPerUnit) handleFieldChange('budgetPerUnit', String(parsed.budgetPerUnit))
+      if (parsed.deliveryTimeline) handleFieldChange('deliveryTimeline', parsed.deliveryTimeline)
+      if (parsed.specifications && parsed.specifications.length) handleFieldChange('specifications', parsed.specifications)
+
+      // Soft preferences
+      if (parsed.preferences) {
+        Object.entries(parsed.preferences).forEach(([k, v]) => {
+          if (!v) return
+          // map parser preference keys to existing soft preference keys if they match
+          if (k === 'brand' && v) handlePreferenceChange('brand', v)
+          if (k === 'vendor' && v) handlePreferenceChange('vendor', v)
+          if (k === 'warranty' && v) handlePreferenceChange('warranty', v)
+          if (k === 'deliveryDate' && v) handlePreferenceChange('deliveryDate', v)
+        })
+      }
+    })
+  }
+
   function handleRunDiscovery() {
     setIsDiscovering(true)
     // Small simulated delay so the Discovering/Evaluating states are
@@ -142,7 +170,7 @@ function BuyingRequestPage() {
 
       <ExampleRequests onLoadScenario={handleLoadScenario} />
 
-      <BuyingBriefInput value={brief} onChange={setBrief} />
+      <BuyingBriefInput value={brief} onChange={setBrief} onParse={handleParseBrief} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
