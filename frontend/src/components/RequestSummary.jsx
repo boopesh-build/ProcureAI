@@ -45,7 +45,7 @@ function RequestSummary({ request }) {
           <dt className="text-slate-500">Authorization</dt>
           <dd className="tabular text-slate-200">
             {request.authorizationLimit
-              ? `₹${Number(request.authorizationLimit).toLocaleString('en-IN')} / unit`
+              ? `₹${Number(request.authorizationLimit).toLocaleString('en-IN')}`
               : '—'}
           </dd>
         </div>

@@ -81,6 +81,7 @@ function BuyingRequestPage() {
       if (parsed.budgetPerUnit) handleFieldChange('budgetPerUnit', String(parsed.budgetPerUnit))
       if (parsed.deliveryTimeline) handleFieldChange('deliveryTimeline', parsed.deliveryTimeline)
       if (parsed.specifications && parsed.specifications.length) handleFieldChange('specifications', parsed.specifications)
+      if (parsed.authorizationLimit) handleFieldChange('authorizationLimit', String(parsed.authorizationLimit))
 
       // Soft preferences
       if (parsed.preferences) {
